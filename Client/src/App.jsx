@@ -24,7 +24,7 @@ const App = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar toggleSidebar={toggleSidebar} />
+        <Navbar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className="flex flex-1">
         <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <Routes>

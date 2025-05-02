@@ -23,14 +23,6 @@ const userSchema = new mongoose.Schema({
     type: String,  // URL to user's profile picture (optional)
     default: '',  // Default value in case the user doesn't have one
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
 });
 
 // Create a model from the schema

@@ -1,9 +1,12 @@
-// app.js
+require('dotenv').config();
+
 const session = require('express-session')
 
 const express = require('express');
 const app = express();
 const PORT = 3000;
+const connectDB = require('./configs/mongodb-connection');
+connectDB();
 
 // Middleware to parse JSON requests
 // Serve static files from the 'public' directory

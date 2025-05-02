@@ -9,23 +9,42 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     { path: '/ordering', label: 'Ordering', icon: 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z' },
     { path: '/emergency', label: 'Emergency', icon: 'M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z' },
     { path: '/services', label: 'Services', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+    { path: '/rent-maintenance', label: 'Rent & Maintenance', icon: 'M12 8c-1.657 0-3 1.343-3 3v2c0 1.657 1.343 3 3 3s3-1.343 3-3v-2c0-1.657-1.343-3-3-3zm0 0v2m-9-2h18M3 12h18' }
   ];
 
   return (
-    <div className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl p-4 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 md:relative md:w-1/5 md:p-6 md:translate-x-0 z-20`}>
+    <div className={`fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-gray-50 to-gray-100 shadow-xl p-4 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 md:relative md:w-1/5 md:p-6 md:translate-x-0 z-20 animate-gradientFade`}>
+      <style>
+        {`
+          @keyframes gradientFade {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+          .animate-gradientFade {
+            background: linear-gradient(135deg, #f9fafb, #e5e7eb, #f9fafb);
+            background-size: 200% 200%;
+            animation: gradientFade 15s ease infinite;
+          }
+        `}
+      </style>
       <div className="flex items-center justify-between mb-6">
-        <span className="text-xl font-bold text-gray-900">SocietyMgr</span>
+        <span className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">SocietyMgr</span>
         <button onClick={toggleSidebar} className="md:hidden">
-          <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg className="w-6 h-6 text-gray-600 hover:text-cyan-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
       </div>
       <div className="mb-6 flex items-center">
-        <img src="https://via.placeholder.com/48" alt="User" className="rounded-full w-12 h-12" />
+        <img
+          src="https://via.placeholder.com/48"
+          alt="User"
+          className="rounded-full w-12 h-12 hover:ring-2 hover:ring-cyan-300 transition-all duration-200"
+        />
         <div className="ml-3">
           <p className="text-sm font-medium text-gray-900">Sarah Connor</p>
-          <p className="text-xs text-gray-500">sarah@gmail.com</p>
+          <p className="text-xs bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">sarah@gmail.com</p>
         </div>
       </div>
       <nav>
@@ -34,10 +53,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             <li key={item.label}>
               <Link
                 to={item.path}
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-200"
-                
+                className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-cyan-100 hover:to-blue-100 rounded-md hover:scale-105 transition-all duration-200"
               >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg className="w-5 h-5 mr-2 text-gray-500 hover:text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon}></path>
                 </svg>
                 {item.label}

@@ -4,12 +4,13 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/sidebar';
 import Footer from './components/Footer';
 import DashboardContent from './components/DashboardContent';
-import Login from './routes/Login';
+// import Login from './routes/Login';
 import Events from './routes/Events';
 import Complaints from './routes/complaints';
 import Ordering from './routes/Ordering';
 import Emergency from './routes/Emergency';
 import Services from './routes/Services';
+import RentMaintenance from './routes/RentMaintenance';
 
 const App = () => {
 
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="/emergency" element={<Emergency />} />
           <Route path="/services" element={<Services />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
+          <Route path="/rent-maintenance" element={<RentMaintenance />} />
         </Routes>
       </div>
       <Footer />

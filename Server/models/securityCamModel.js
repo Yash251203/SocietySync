@@ -19,6 +19,6 @@ const securityCamSchema = new mongoose.Schema({
   }
 });
 
-const SecurityCam = mongoose.model('SecurityCam', securityCamSchema);
+const securityCam = mongoose.model('securityCam', securityCamSchema);
 
-module.exports = SecurityCam;
+module.exports = securityCam;

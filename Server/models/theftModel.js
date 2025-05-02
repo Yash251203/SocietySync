@@ -27,6 +27,6 @@ const theftSchema = new mongoose.Schema({
   }
 });
 
-const Theft = mongoose.model('Theft', theftSchema);
+const theft = mongoose.model('theft', theftSchema);
 
-module.exports = Theft;
+module.exports = theft;

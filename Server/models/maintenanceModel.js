@@ -29,6 +29,6 @@ const maintenanceSchema = new mongoose.Schema({
   },
 });
 
-const Maintenance = mongoose.model('Maintenance', maintenanceSchema);
+const maintenance = mongoose.model('maintenance', maintenanceSchema);
 
-module.exports = Maintenance;
+module.exports = maintenance;

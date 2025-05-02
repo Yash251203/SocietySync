@@ -24,7 +24,6 @@ const userSchema = new mongoose.Schema({
   },
   houseNo: {
     type: String,
-    required: true,
     trim: true,
   }
 });

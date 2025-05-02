@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 // Create a User schema for Google OAuth
 const userSchema = new mongoose.Schema({
   googleId: {
@@ -16,13 +15,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    lowercase: true,
+    lowercase: true, 
     trim: true,
   },
   profilePicture: {
     type: String,  // URL to user's profile picture (optional)
     default: '',  // Default value in case the user doesn't have one
   },
+  houseNo: {
+    type: String,
+    required: true,
+    trim: true,
+  }
 });
 
 // Create a model from the schema

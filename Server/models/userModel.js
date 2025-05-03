@@ -2,11 +2,6 @@ const mongoose = require('mongoose');
 
 // Create a User schema for Google OAuth
 const userSchema = new mongoose.Schema({
-  googleId: {
-    type: String,
-    required: true,
-    unique: true,  // Google ID is unique for each user
-  },
   name: {
     type: String,
     required: true,
@@ -25,10 +20,15 @@ const userSchema = new mongoose.Schema({
   houseNo: {
     type: String,
     trim: true,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
   }
 });
 
 // Create a model from the schema
-const user = mongoose.model('user', userSchema);
+const userModel = mongoose.model('user', userSchema);
 
-module.exports = user;
+module.exports = userModel;

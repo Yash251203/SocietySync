@@ -1,0 +1,45 @@
+const express = require("express");
+const userModel = require("../models/userModel");
+const router = express.Router();
+const authMiddleware = require("../middlewares/auth");
+const jwt = require('jsonwebtoken');
+const bcrypt = require("bcrypt");
+
+router.post("/register", async (req, res) => {
+    const { name, email, password, houseNo } = req.body;
+
+    const existing = await userModel.findOne({ email });
+    if (existing) return res.status(400).json({ message: 'User already Exists' });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new userModel({
+        name,
+        email,
+        houseNo,
+        password: hashedPassword,
+    });
+    await newUser.save();
+
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+
+    res.json({ token, user: { id: newUser._id, name: newUser.name, houseNo: newUser.houseNo, email: newUser.email } });
+});
+
+router.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+    const user = await userModel.findOne({email});
+    if (!user) return res.status(400).json({ message: 'User not found' });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+
+    res.json({ token, user: { id: user._id, name: user.name, houseNo: user.houseNo, email: user.email } });
+});
+
+router.post("/me", authMiddleware, (req, res) => {
+    res.json(req.user);
+})
+
+module.exports = router;

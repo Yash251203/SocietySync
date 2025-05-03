@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AuthPage = () => {
-  const [form, setForm] = useState({ username: '', email: '', password: '' });
+  const [form, setForm] = useState({ name: '', houseNo: '', email: '', password: '' });
   const [isLogin, setIsLogin] = useState(true);
   const [user, setUser] = useState(null);
 
@@ -15,11 +15,12 @@ const AuthPage = () => {
     const endpoint = isLogin ? '/login' : '/register';
   
     try {
-      const res = await axios.post(`http://localhost:5000/api/auth${endpoint}`, form);
+        console.log(form);
+      const res = await axios.post(`http://localhost:3000/api/auth${endpoint}`, form ,{ withCredentials: true });
       localStorage.setItem('token', res.data.token);
       setUser(res.data.user);
     } catch (err) {
-      alert(err.response?.data?.msg || 'Something went wrong');
+      alert(err.response?.data?.message || 'Something went wrong');
     }
   };
   
@@ -27,7 +28,7 @@ const AuthPage = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      axios.get('http://localhost:5000/api/auth/me', {
+      axios.get('http://localhost:3000/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => setUser(res.data))
@@ -35,10 +36,21 @@ const AuthPage = () => {
     }
   }, []);
 
+  const handleLogout = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        localStorage.removeItem(token);
+        setUser(null);
+    }
+  }
+
   return (
     <div>
       {user ? (
-        <h2>Welcome, {user.username}</h2>
+        <>
+        <h2>Welcome, {user.name}</h2>
+        <button onClick={handleLogout} className='mt-10'>LOGOUT</button>
+        </>
       ) : (
         <form onSubmit={handleSubmit}>
           {!isLogin && (

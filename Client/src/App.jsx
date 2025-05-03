@@ -4,7 +4,7 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/sidebar';
 import Footer from './components/Footer';
 import DashboardContent from './components/DashboardContent';
-// import Login from './routes/Login';
+import Login from './routes/Login_New';
 import Events from './routes/Events';
 import Complaints from './routes/complaints';
 import Ordering from './routes/Ordering';
@@ -34,6 +34,7 @@ const App = () => {
           <Route path="/ordering" element={<Ordering />} />
           <Route path="/emergency" element={<Emergency />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/login" element={<Login />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
           <Route path="/rent-maintenance" element={<RentMaintenance />} />
         </Routes>

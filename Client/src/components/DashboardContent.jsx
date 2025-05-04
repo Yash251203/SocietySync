@@ -1,7 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const DashboardContent = () => {
+  const [dashboardData, setDashboardData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem('token');
+      try {
+        const res = await axios.get("http://localhost:3000/api/dashboard", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setDashboardData(res.data); // Save response in state
+      } catch (err) {
+        console.error("Error fetching dashboard:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString('en-GB', {
+    weekday: 'long',   // adds "Sunday"
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
   const cards = [
     {
       title: 'Events',
@@ -78,77 +106,81 @@ const DashboardContent = () => {
     }
   ];
 
+
   return (
+    <>
+    { dashboardData ? 
     <div className="w-full md:w-4/5 p-6 md:p-8 relative animate-gradientFade">
-      <style>
-        {`
-          @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-          }
-          @keyframes gradientFade {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
-          @keyframes pulseText {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-          }
-          .animate-slideIn {
-            animation: slideIn 0.5s ease-out;
-          }
-          .animate-gradientFade {
-            background: linear-gradient(135deg, #e2e8f0, #f1f5f9, #e2e8f0);
-            background-size: 200% 200%;
-            animation: gradientFade 15s ease infinite;
-          }
-          .animate-pulseText:hover {
-            animation: pulseText 1s infinite;
-          }
-        `}
-      </style>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-        <div>
-          <h2 className="text-3xl md:text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent animate-pulseText">
-            Hello, Sara
-          </h2>
-          <p className="text-lg bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent animate-slideIn">
-            Today is Friday, May 02, 2025
-          </p>
-        </div>
-        
+    <style>
+      {`
+        @keyframes slideIn {
+          from { transform: translateY(-50px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes gradientFade {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes pulseText {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1); }
+        }
+        .animate-slideIn {
+          animation: slideIn 0.5s ease-out;
+        }
+        .animate-gradientFade {
+          background: linear-gradient(135deg, #e2e8f0, #f1f5f9, #e2e8f0);
+          background-size: 200% 200%;
+          animation: gradientFade 15s ease infinite;
+        }
+        .animate-pulseText:hover {
+          animation: pulseText 1s infinite;
+        }
+      `}
+    </style>
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+      <div>
+        <h2 className="text-3xl md:text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent animate-pulseText">
+          {`${dashboardData.name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}, ${dashboardData.houseNo}`}
+        </h2>
+        <p className="text-lg bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent animate-slideIn">
+          Today is {`${formattedDate}`}
+        </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cards.map((card, index) => (
-          <Link
-            key={card.title}
-            to={card.href}
-            className={`${card.bg}/50 h-64 text-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 hover:ring-2 hover:ring-cyan-300 transition-all duration-300 cursor-pointer bg-cover bg-center relative overflow-hidden animate-slideIn`}
-            onClick={card.onClick}
-            style={{ backgroundImage: `url(${card.image})`, animationDelay: `${index * 0.1}s` }}
-          >
-            <div className="absolute inset-0 bg-black/30 hover:bg-black/50 hover:backdrop-blur-md transition-all duration-300"></div>
-            <div className="absolute inset-0  duration-300"></div>
-            <div className="absolute top-4 left-4 ">{card.icon}</div>
-            <div className="relative z-10 mt-8">
-              <h3
-                className="text-3xl font-semibold hover:text-3xl hover:shadow-glow transition-all duration-300"
-              >
-                {card.title}
-              </h3>
-              <p
-                className="text-lg mt-1"
-                style={{ textShadow: '1px 1px 3px rgba(0, 0, 0, 0.7)' }}
-              >
-                {card.description}
-              </p>
-            </div>
-          </Link>
-        ))}
-      </div>
+      
     </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {cards.map((card, index) => (
+        <Link
+          key={card.title}
+          to={card.href}
+          className={`${card.bg}/50 h-64 text-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 hover:ring-2 hover:ring-cyan-300 transition-all duration-300 cursor-pointer bg-cover bg-center relative overflow-hidden animate-slideIn`}
+          onClick={card.onClick}
+          style={{ backgroundImage: `url(${card.image})`, animationDelay: `${index * 0.1}s` }}
+        >
+          <div className="absolute inset-0 bg-black/30 hover:bg-black/50 hover:backdrop-blur-md transition-all duration-300"></div>
+          <div className="absolute inset-0  duration-300"></div>
+          <div className="absolute top-4 left-4 ">{card.icon}</div>
+          <div className="relative z-10 mt-8">
+            <h3
+              className="text-3xl font-semibold hover:text-3xl hover:shadow-glow transition-all duration-300"
+            >
+              {card.title}
+            </h3>
+            <p
+              className="text-lg mt-1"
+              style={{ textShadow: '1px 1px 3px rgba(0, 0, 0, 0.7)' }}
+            >
+              {card.description}
+            </p>
+          </div>
+        </Link>
+      ))}
+    </div>
+  </div> : "Loading..."}
+    </>
   );
 };
 

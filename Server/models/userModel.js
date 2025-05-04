@@ -14,8 +14,8 @@ const userSchema = new mongoose.Schema({
     trim: true,
   },
   profilePicture: {
-    type: String,  // URL to user's profile picture (optional)
-    default: '',  // Default value in case the user doesn't have one
+    data: Buffer,
+    contentType: String
   },
   houseNo: {
     type: String,

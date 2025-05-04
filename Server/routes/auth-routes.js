@@ -18,12 +18,16 @@ router.post("/register", async (req, res) => {
             email,
             houseNo,
             password: hashedPassword,
+            profilePicture: req.file ? {
+                data: req.file.buffer,
+                contentType: req.file.mimetype
+            } : undefined
         });
         await newUser.save();
 
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
-        res.json({ token, user: { id: newUser._id, name: newUser.name, houseNo: newUser.houseNo, email: newUser.email } });
+        res.json({ token, user: { id: newUser._id, name: newUser.name, houseNo: newUser.houseNo, email: newUser.email, profilePicture: !!newUser.profilePicture?.data, } });
     } catch (error) {
         console.log(error);
         res.status(500).json({message: "Oops! Something broke. We're working on it."});
@@ -51,5 +55,20 @@ router.post("/login", async (req, res) => {
 router.post("/me", authMiddleware, (req, res) => {
     res.json(req.user);
 })
+
+// router.get("/profile-picture", authMiddleware, async (req, res) => {
+//     try {
+//       const user = await userModel.findById(req.user._id);
+//       if (!user || !user.profilePicture || !user.profilePicture.data) {
+//         return res.status(404).json({ message: "Profile picture not found" });
+//       }
+  
+//       res.set("Content-Type", user.profilePicture.contentType);
+//       res.send(user.profilePicture.data);
+//     } catch (error) {
+//       res.status(500).json({ message: "Failed to retrieve profile picture" });
+//     }
+//   });
+  
 
 module.exports = router;

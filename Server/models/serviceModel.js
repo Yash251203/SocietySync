@@ -4,7 +4,11 @@ const mongoose = require('mongoose');
 const serviceSchema = new mongoose.Schema({
   residentId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model
+    ref: 'user', // Reference to the User model
+    required: true,
+  },
+  houseNo: {
+    type: String,
     required: true,
   },
   category: {
@@ -12,7 +16,7 @@ const serviceSchema = new mongoose.Schema({
     enum: ['plumbing', 'carpentering', 'electrical', 'cleaning', 'other'],
     required: true,
   },
-  description: {
+  detail: {
     type: String,
     required: true,
     trim: true,
@@ -28,11 +32,11 @@ const serviceSchema = new mongoose.Schema({
   },
   workerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Assuming worker is also a user
+    ref: 'user', // Assuming worker is also a user
     default: null,
   },
 });
 
-const service = mongoose.model('service', serviceSchema);
+const serviceModel = mongoose.model('service', serviceSchema);
 
-module.exports = service;
+module.exports = serviceModel;

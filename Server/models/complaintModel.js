@@ -1,32 +1,31 @@
 const mongoose = require('mongoose');
 
-// Create a Theft Report schema
-const theftSchema = new mongoose.Schema({
+const complaintSchema = new mongoose.Schema({
   residentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user', // Reference to the User model
     required: true,
   },
-  description: {
+  houseNo: {
     type: String,
     required: true,
-    trim: true,
   },
-  media: {
-    type: String, // URL or base64 string (optional)
-    default: '',
+  category: {
+    type: String,
+    enum: ["Maintainance", "Billing", "Noise", "Security"],
+    required: true
   },
   detail: {
     type: String,
     required: true,
     trim: true,
   },
-  timestamp: {
+  date: {
     type: Date,
     default: Date.now,
   }
 });
 
-const theft = mongoose.model('theft', theftSchema);
+const complaintModel = mongoose.model('complaint', complaintSchema);
 
-module.exports = theft;
+module.exports = complaintModel;

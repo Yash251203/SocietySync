@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AuthPage = () => {
+
   const [form, setForm] = useState({ name: '', houseNo: '', email: '', password: '' });
+
   const [isLogin, setIsLogin] = useState(true);
   const [user, setUser] = useState(null);
 
@@ -15,7 +17,6 @@ const AuthPage = () => {
     const endpoint = isLogin ? '/login' : '/register';
   
     try {
-        console.log(form);
       const res = await axios.post(`http://localhost:3000/api/auth${endpoint}`, form ,{ withCredentials: true });
       localStorage.setItem('token', res.data.token);
       setUser(res.data.user);

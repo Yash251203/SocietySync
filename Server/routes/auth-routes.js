@@ -52,7 +52,7 @@ router.post("/login", async (req, res) => {
     }
 });
 
-router.post("/me", authMiddleware, (req, res) => {
+router.get("/me", authMiddleware, (req, res) => {
     res.json(req.user);
 })
 

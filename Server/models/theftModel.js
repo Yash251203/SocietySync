@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const theftSchema = new mongoose.Schema({
   residentId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model
+    ref: 'user', // Reference to the User model
     required: true,
   },
   description: {

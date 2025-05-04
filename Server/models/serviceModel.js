@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const serviceSchema = new mongoose.Schema({
   residentId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model
+    ref: 'user', // Reference to the User model
     required: true,
   },
   category: {
@@ -28,7 +28,7 @@ const serviceSchema = new mongoose.Schema({
   },
   workerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Assuming worker is also a user
+    ref: 'user', // Assuming worker is also a user
     default: null,
   },
 });

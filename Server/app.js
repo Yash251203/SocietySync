@@ -19,6 +19,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }))
 
 const authRoutes = require("./routes/auth-routes");
+const eventRoutes = require("./routes/event-routes");
 
 
 app.get('/api', (req, res) => {
@@ -26,6 +27,7 @@ app.get('/api', (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/events", eventRoutes);
 
 // Start the server
 app.listen(PORT, () => {

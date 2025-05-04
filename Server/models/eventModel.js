@@ -15,16 +15,19 @@ const eventSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true,
     trim: true,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'user',
     default: defaultAdminId,
   },
+  venue: {
+    type: String,
+    default: "Society Ground",
+  }
 });
 
-const event = mongoose.model('event', eventSchema);
+const eventModel = mongoose.model('event', eventSchema);
 
-module.exports = event;
+module.exports = eventModel;

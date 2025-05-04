@@ -7,12 +7,16 @@ const serviceSchema = new mongoose.Schema({
     ref: 'user', // Reference to the User model
     required: true,
   },
+  houseNo: {
+    type: String,
+    required: true,
+  },
   category: {
     type: String,
     enum: ['plumbing', 'carpentering', 'electrical', 'cleaning', 'other'],
     required: true,
   },
-  description: {
+  detail: {
     type: String,
     required: true,
     trim: true,
@@ -33,6 +37,6 @@ const serviceSchema = new mongoose.Schema({
   },
 });
 
-const service = mongoose.model('service', serviceSchema);
+const serviceModel = mongoose.model('service', serviceSchema);
 
-module.exports = service;
+module.exports = serviceModel;

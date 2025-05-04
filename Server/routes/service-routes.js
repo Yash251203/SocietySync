@@ -1,6 +1,6 @@
 const express = require("express");
 const authMiddleware = require("../middlewares/auth");
-const complaintModel = require("../models/complaintModel");
+const serviceModel = require("../models/serviceModel");
 const router = express.Router();
 
 router.post("/create", authMiddleware, async (req, res) => {
@@ -9,18 +9,19 @@ router.post("/create", authMiddleware, async (req, res) => {
     if (!category || !detail) return res.status(400).json({ message: 'Invalid request' });
 
     try {
-        const existing = await complaintModel.findOne({ category, detail });
-        if (existing) return res.json({ message: "Complaint already exists"});
+        const existing = await serviceModel.findOne({ category, detail });
+        if (existing) return res.json({ message: "Service Request already exists"});
 
-        const complaint = new complaintModel({
+        const service = new serviceModel({
             residentId: req.user._id,
             houseNo: req.user.houseNo,
             category,
             detail,
+            status: "open",
         });
-        await complaint.save();
+        await service.save();
     
-        res.json(complaint);
+        res.json(service);
     } catch (error) {
         console.log(error);
         res.status(500).json({message: "Oops! Something broke. We're working on it."});
@@ -34,15 +35,15 @@ router.get("/", authMiddleware, async (req, res) => {
         const pageNumber = parseInt(page, 10);
         const limitNumber = parseInt(limit, 10);
 
-        const complaint = await complaintModel.find({ residentId: req.user._id})
-            .sort({ date: 1 })  // Optional: Sort complaint by date (ascending)
-            .skip((pageNumber - 1) * limitNumber)  // Skip complaint based on current page
-            .limit(limitNumber);  // Limit the number of complaint returned
+        const service = await serviceModel.find({ residentId: req.user._id})
+            .sort({ date: 1 })  // Optional: Sort service by date (ascending)
+            .skip((pageNumber - 1) * limitNumber)  // Skip service based on current page
+            .limit(limitNumber);  // Limit the number of service returned
 
-        res.json(complaint);
+        res.json(service);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Failed to fetch complaints" });
+        res.status(500).json({ error: "Failed to fetch services" });
     }
 });
 
@@ -51,34 +52,34 @@ router.put("/:id", authMiddleware, async (req, res) => {
     const { category, detail } = req.body;
 
     try {
-        const updatedComplaint = await complaintModel.findByIdAndUpdate(
+        const updatedRequest = await serviceModel.findByIdAndUpdate(
             id,
             { category, detail },
             { new: true, runValidators: true }  // `new: true` ensures the returned event is the updated one
         );
 
-        if (!updatedComplaint) return res.status(404).json({ message: "Event not found" });
+        if (!updatedRequest) return res.status(404).json({ message: "Request not found" });
 
-        res.json(updatedComplaint);  
+        res.json(updatedRequest);  
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Failed to update complaint" });
+        res.status(500).json({ error: "Failed to update request" });
     }
 });
 
 router.delete("/:id", authMiddleware, async (req, res) => {
     try {
-        const complaintId = req.params.id;
+        const serviceId = req.params.id;
         
-        const complaint = await complaintModel.findByIdAndDelete(complaintId);
-        if (!complaint) {
-            return res.status(404).json({ message: "Complaint not found" });
+        const request = await serviceModel.findByIdAndDelete(serviceId);
+        if (!request) {
+            return res.status(404).json({ message: "Request not found" });
         }
 
-        res.json({ message: "Complaint deleted successfully" });
+        res.json({ message: "Request deleted successfully" });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ error: "Failed to delete complaint" });
+        res.status(500).json({ error: "Failed to delete request" });
     }
 });
 

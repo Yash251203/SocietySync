@@ -6,10 +6,6 @@ const complaintSchema = new mongoose.Schema({
     ref: 'user', // Reference to the User model
     required: true,
   },
-  name: {
-    type: String,
-    default: "Anonymous",
-  },
   houseNo: {
     type: String,
     required: true,

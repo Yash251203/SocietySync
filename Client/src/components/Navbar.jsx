@@ -1,8 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Navbar = ({ toggleSidebar, isSidebarOpen }) => {
+  
   return (
-    <nav className={` bg-white shadow-md w-screen md:py-5 flex items-center justify-between sticky top-0 z-30 ${isSidebarOpen ? 'hidden' : 'block'}`}
+    <nav className={` bg-white shadow-md w-screen md:py-5 flex items-center justify-between sticky top-0 z-30  ${isSidebarOpen ? 'hidden' : 'block'}`}
     >
       <button
         onClick={toggleSidebar}
@@ -13,7 +15,11 @@ const Navbar = ({ toggleSidebar, isSidebarOpen }) => {
         </svg>
       </button>
       <img className='h-14' src="https://i.pinimg.com/736x/1a/92/2e/1a922e75f358dbf9a6e033888a45591b.jpg" alt="" />
+     
+        
       <h1 className="text-xl md:text-2xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2">SocietySync</h1>
+     
+
       {/* <div className="md:hidden w-10"></div>  */}
 
       {/* <div className='flex items-center justify-center gap-20'>

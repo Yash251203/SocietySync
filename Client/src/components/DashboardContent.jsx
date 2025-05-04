@@ -1,26 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const DashboardContent = () => {
   const [dashboardData, setDashboardData] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem('token');
-      try {
-        const res = await axios.get("http://localhost:3000/api/dashboard", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setDashboardData(res.data); // Save response in state
-      } catch (err) {
-        console.error("Error fetching dashboard:", err);
-      }
-    };
-
-    fetchData();
-  }, []);
+    const userData = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    if (userData && token) {
+      setDashboardData(JSON.parse(userData));
+    }
+  }, []); 
 
   const today = new Date();
   const formattedDate = today.toLocaleDateString('en-GB', {

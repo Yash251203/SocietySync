@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Footer = () => {
+  const navigate = useNavigate();
   const quickLinks = [
     { label: 'Dashboard', href: '#dashboard' },
     { label: 'Events', href: '#events' },
@@ -12,12 +14,18 @@ const Footer = () => {
     { label: 'Privacy Policy', href: '#privacy' },
     { label: 'Terms of Service', href: '#terms' },
   ];
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate("/login");
+  };
 
   return (
     <footer className="bg-white shadow-md p-6 mt-auto">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
         {/* Branding */}
         <div>
+    <button onClick={handleLogout}>logout</button>
           <h3 className="text-lg font-bold text-gray-900">SocietySync</h3>
           <p className="text-sm text-gray-600 mt-1">Empowering Community Living</p>
         </div>

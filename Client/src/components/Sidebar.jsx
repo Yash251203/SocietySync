@@ -38,7 +38,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       </div>
       <div className="mb-6 flex items-center">
         <img
-          src="https://via.placeholder.com/48"
+          src="https://placehold.co/400"
           alt="User"
           className="rounded-full w-12 h-12 hover:ring-2 hover:ring-cyan-300 transition-all duration-200"
         />

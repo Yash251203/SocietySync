@@ -15,23 +15,31 @@ import RentMaintenance from './routes/RentMaintenance';
 const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // New state for loading
 
   const toggleSidebar = () => {
-    console.log('Toggling sidebar, current state:', isSidebarOpen);
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setUser(true); // Simplified for demo; in a real app, verify the token with the server
-    }
-  }, []);
-
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
   };
+
+  useEffect(() => {
+    // Simulate fetching user data (this could also be an API call)
+    const token = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+    if (token && storedUser) {
+      setUser(JSON.parse(storedUser)); // or just `true` if you just need to track login state
+    } else {
+      setUser(null);
+    }
+
+    // After checking localStorage or API, set loading to false
+    setLoading(false);
+  }, []);
 
   const ProtectedLayout = ({ children }) => {
     return (
@@ -45,6 +53,10 @@ const App = () => {
       </div>
     );
   };
+
+  if (loading) {
+    return <div>Loading...</div>; // Show loading indicator until user data is fetched
+  }
 
   return (
     <Routes>

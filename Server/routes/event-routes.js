@@ -51,6 +51,10 @@ router.put("/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;
     const { title, description, venue, date } = req.body;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
     try {
         const updatedEvent = await eventModel.findByIdAndUpdate(
             id,

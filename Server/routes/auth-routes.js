@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 
 router.post("/register", async (req, res) => {
     const { name, email, password, houseNo } = req.body;
-
+    if (!name || !email || !password || !houseNo) return res.status(400).json({ message: 'Please fill all the credentials' });
     try {
         const existing = await userModel.findOne({ email });
         if (existing) return res.status(400).json({ message: 'User already Exists' });

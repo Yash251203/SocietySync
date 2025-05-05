@@ -13,7 +13,7 @@ const serviceSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['plumbing', 'carpentering', 'electrical', 'cleaning', 'other'],
+    enum: ['Plumbing', 'Carpentering', 'Electrical', 'Masonry', 'Cleaning', 'Other'],
     required: true,
   },
   detail: {

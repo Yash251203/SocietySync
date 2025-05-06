@@ -5,19 +5,21 @@ const EmergencyPage = () => {
 
   const handleEmergencyClick = () => {
     try {
-      window.open('https://wa.me/+918102346798?call', '_blank');
-    } catch {
-      window.location.href = 'tel:+918102346798';
+      // Directly open the phone dialer for a normal call
+      window.location.href = 'tel:+918102346798'; // Replace with the desired phone number
+    } catch (error) {
+      console.error('Error triggering the emergency call:', error);
     }
     setIsModalVisible(true);
   };
+  
 
   const closeModal = () => {
     setIsModalVisible(false);
   };
 
   return (
-    <div className="w-full md:w-4/5 p-6 md:p-8 relative animate-gradientFade">
+    <div className="w-full md:w-4/5 h-[50vh] md:h-full p-6 md:p-8 relative animate-gradientFade">
       <style>
         {`
           @keyframes slideIn {
@@ -55,7 +57,7 @@ const EmergencyPage = () => {
           .animate-pulseIcon { animation: pulseIcon 1.5s infinite; }
         `}
       </style>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+      <div className="flex flex-col justify-center  h-full items-center md:items-center mb-8 text-center">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent animate-pulseText">
             Emergency Alert
@@ -66,7 +68,7 @@ const EmergencyPage = () => {
         </div>
         <button
           onClick={handleEmergencyClick}
-          className="mt-4 md:mt-0 bg-gradient-to-r from-red-600 to-rose-600 text-white px-6 py-3 rounded-lg text-sm font-semibold flex items-center justify-center space-x-2 animate-pulseButton hover:ring-2 hover:ring-cyan-300 hover:scale-105 transition-all duration-200"
+          className="mt-4 bg-gradient-to-r from-red-600 to-rose-600 text-white px-6 py-3 rounded-lg text-sm font-semibold flex items-center justify-center space-x-2 animate-pulseButton hover:ring-2 hover:ring-cyan-300 hover:scale-105 transition-all duration-200"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />

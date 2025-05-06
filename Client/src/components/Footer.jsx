@@ -26,7 +26,7 @@ const Footer = () => {
 
         {/* Navigation Links */}
         <div>
-          <h4 className="text-sm font-semibold text-gray-900">Quick Links</h4>
+          <h4 className="text-sm font-semibold text-gray-900 text-center">Quick Links</h4>
           <ul className="mt-2 space-y-1 flex items-center justify-center gap-4 underline md:no-underline">
             {quickLinks.map((link) => (
               <li key={link.label}>

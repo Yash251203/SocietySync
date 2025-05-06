@@ -74,7 +74,7 @@ const Login = () => {
       <div className="border-2 border-transparent p-1 rounded-xl animate-slideIn">
         <div className="bg-gray-200 p-8 rounded-lg shadow-xl max-w-md w-full mx-4">
           <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent mb-6 text-center animate-pulseText">
-            {isLogin ? 'Login to SocietyMgr' : 'Register for SocietyMgr'}
+            {isLogin ? 'Login to SocietySync' : 'Register for SocietySync'}
           </h2>
           <form onSubmit={handleSubmit} className="h-96 w-96 space-y-4">
             {!isLogin && (

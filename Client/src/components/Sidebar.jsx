@@ -35,7 +35,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             console.error('User does not have an _id');
           }
         } else {
-          console.log('No token or user found in localStorage');
+          console.log('No token or user found');
         }
       } catch (error) {
         console.error('Error fetching service requests:', error);
@@ -74,6 +74,10 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
           </svg>
         </button>
       </div>
+      <div onClick={() => {
+        toggleSidebar();
+        navigate("/me");
+      }}>
       { user && (
         <div className="mb-6 flex items-center">
         <div>
@@ -97,6 +101,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         </div>
       </div>
       )}
+      </div>
       <nav>
         <ul className="flex flex-col space-y-1">
           {navItems.map((item) => (

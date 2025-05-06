@@ -9,6 +9,7 @@ import Emergency from './routes/Emergency';
 import Services from './routes/Services';
 import RentMaintenance from './routes/RentMaintenance';
 import DashboardContent from './components/DashboardContent';
+import Me from './routes/Me';
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -39,6 +40,8 @@ const App = () => {
         <Route path="/emergency" element={<Emergency />} />
         <Route path="/services" element={<Services />} />
         <Route path="/rent-maintenance" element={<RentMaintenance />} />
+        <Route path="/me" element={<Me />} />
+
       </Route>
 
       <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} />} />

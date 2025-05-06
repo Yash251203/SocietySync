@@ -44,6 +44,22 @@ router.put("/profile-picture", authMiddleware, upload.single("profilePicture"), 
     }
 });
 
+router.get("/profile-picture/:userId", async (req, res) => {
+    try {
+      const user = await userModel.findById(req.params.userId);
+      if (!user || !user.profilePicture) {
+        return res.status(404).json({ message: "Profile picture not found" });
+      }
+  
+      res.set("Content-Type", user.profilePicture.contentType);
+      res.send(user.profilePicture.data);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Failed to retrieve profile picture" });
+    }
+  });
+  
+
 router.put("/", authMiddleware, async (req, res) => {
     const { name, email, password, houseNo } = req.body;
 

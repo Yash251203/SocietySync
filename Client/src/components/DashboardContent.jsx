@@ -14,12 +14,13 @@ const DashboardContent = () => {
   }, []); 
 
   const today = new Date();
-  const formattedDate = today.toLocaleDateString('en-GB', {
-    weekday: 'long',   // adds "Sunday"
+  const parts = today.toLocaleDateString('en-GB', {
+    weekday: 'long',
     day: 'numeric',
     month: 'long',
-    year: 'numeric',
-  });
+    year: 'numeric'
+  }).split(" ");
+  const formattedDate = `${parts[0]}, ${parts.slice(1).join(' ')}`;  
 
   const cards = [
     {

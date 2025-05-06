@@ -25,7 +25,6 @@ const authRoutes = require("./routes/auth-routes");
 const eventRoutes = require("./routes/event-routes");
 const complaintRoutes = require("./routes/complaint-routes");
 const serviceRoutes = require("./routes/service-routes");
-const dashboardRoutes = require("./routes/dashboard-routes");
 const meRoutes = require("./routes/me-routes");
 
 
@@ -34,7 +33,6 @@ app.get('/api', (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/complaints", complaintRoutes);
 app.use("/api/services", serviceRoutes);

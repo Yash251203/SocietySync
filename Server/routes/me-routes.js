@@ -3,6 +3,7 @@ const userModel = require("../models/userModel");
 const router = express.Router();
 const authMiddleware = require("../middlewares/auth");
 const upload = require("../configs/multer");
+const bcrypt = require("bcrypt");
 
 router.get("/", authMiddleware, async (req, res) => {
     try {
@@ -27,6 +28,7 @@ router.get("/", authMiddleware, async (req, res) => {
 router.put("/profile-picture", authMiddleware, upload.single("profilePicture"), async (req, res) => {
     try { 
         const user = await userModel.findById(req.user._id);
+        console.log(user)
         if (!user) return res.status(404).json({ message: "User not found" });
 
         if (!req.file) return res.status(400).json({ message: "No file uploaded" });
@@ -35,7 +37,6 @@ router.put("/profile-picture", authMiddleware, upload.single("profilePicture"), 
             data: req.file.buffer,
             contentType: req.file.mimetype,
         };
-        await user.save();
 
         res.json({ message: "Profile picture updated successfully" });
     } catch (err) {
@@ -60,18 +61,19 @@ router.get("/profile-picture/:userId", async (req, res) => {
   });
   
 
-router.put("/", authMiddleware, async (req, res) => {
-    const { name, email, password, houseNo } = req.body;
+  router.put("/", authMiddleware, async (req, res) => {
+    const { name, email, houseNo, password } = req.body;
 
     try {
         const user = await userModel.findById(req.user._id);
-    
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        if (name) {
+
+        if (name && name !== user.name) {
             user.name = name;
         }
+
         if (email && email !== user.email) {
             const existingUser = await userModel.findOne({ email });
             if (existingUser) {
@@ -79,18 +81,26 @@ router.put("/", authMiddleware, async (req, res) => {
             }
             user.email = email;
         }
+
         if (password) {
-            const hashedPassword = await bcrypt.hash(password, 10);
-            user.password = hashedPassword;
+            const oldPass = user.password;
+            const isNewPassword = await bcrypt.compare(password, oldPass);
+            if (!isNewPassword) {
+                const hashedPassword = await bcrypt.hash(password, 10);
+                user.password = hashedPassword;
+            } else {
+                return res.status(400).json({ message: "New password cannot be the same as the old password" });
+            }
         }
 
-        if (houseNo) {
+        if (houseNo && houseNo !== user.houseNo) {
             const existingUser = await userModel.findOne({ houseNo });
             if (existingUser) {
                 return res.status(400).json({ message: "House number already exists" });
             }
             user.houseNo = houseNo;
         }
+
         await user.save();
 
         res.json({
@@ -103,9 +113,10 @@ router.put("/", authMiddleware, async (req, res) => {
             },
         });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Failed to update user details" });
+        console.log("Error during user update:", error);
+        res.status(500).json({ message: "Failed to update user details", error: error.message || error });
     }
 });
+
 
 module.exports = router;

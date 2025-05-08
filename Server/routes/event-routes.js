@@ -1,6 +1,8 @@
 const express = require("express");
 const authMiddleware = require("../middlewares/auth");
 const eventModel = require("../models/eventModel");
+const userModel = require("../models/userModel");
+const { default: mongoose } = require("mongoose");
 const router = express.Router();
 
 router.post("/create", authMiddleware, async (req, res) => {
@@ -9,6 +11,8 @@ router.post("/create", authMiddleware, async (req, res) => {
     if (!title || !date) return res.status(400).json({ message: 'Invalid request' });
 
     try {
+        const admin = await userModel.findById(req.user._id );
+        if (admin.role !== "admin") return res.json({ message: "You are not an admin"});
         const existing = await eventModel.findOne({ title });
         if (existing) return res.json({ message: "Event already exists"});
 
@@ -51,11 +55,11 @@ router.put("/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;
     const { title, description, venue, date } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ error: 'Invalid user ID' });
-    }
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ error: 'Invalid user ID' });
 
     try {
+        const admin = await userModel.findById(req.user._id );
+        if (admin.role !== "admin") return res.json({ message: "You are not an admin"});
         const updatedEvent = await eventModel.findByIdAndUpdate(
             id,
             { title, description, venue, date },
@@ -74,7 +78,12 @@ router.put("/:id", authMiddleware, async (req, res) => {
 });
 
 router.delete("/:id", authMiddleware, async (req, res) => {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ error: 'Invalid user ID' });
+
     try {
+        const admin = await userModel.findById(req.user._id );
+        if (admin.role !== "admin") return res.json({ message: "You are not an admin"});
         const eventId = req.params.id;
         
         const event = await eventModel.findByIdAndDelete(eventId);

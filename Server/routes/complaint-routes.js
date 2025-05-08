@@ -1,6 +1,7 @@
 const express = require("express");
 const authMiddleware = require("../middlewares/auth");
 const complaintModel = require("../models/complaintModel");
+const userModel = require("../models/userModel");
 const router = express.Router();
 
 router.post("/create", authMiddleware, async (req, res) => {
@@ -34,12 +35,23 @@ router.get("/", authMiddleware, async (req, res) => {
         const pageNumber = parseInt(page, 10);
         const limitNumber = parseInt(limit, 10);
 
-        const complaint = await complaintModel.find({ residentId: req.user._id})
+        let complaint;
+        const admin = await userModel.findById(req.user._id );
+        if (admin.role !== "admin") {
+            complaint = await complaintModel.find({ residentId: req.user._id})
             .sort({ date: 1 })  // Optional: Sort complaint by date (ascending)
             .skip((pageNumber - 1) * limitNumber)  // Skip complaint based on current page
             .limit(limitNumber);  // Limit the number of complaint returned
+        }
+        else {
+            complaint = await complaintModel.find()
+            .sort({ date: 1 })  // Optional: Sort complaint by date (ascending)
+            .skip((pageNumber - 1) * limitNumber)  // Skip complaint based on current page
+            .limit(limitNumber);  // Limit the number of complaint returned
+        }
+        res.json(complaint);    
 
-        res.json(complaint);
+        
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Failed to fetch complaints" });

@@ -12,20 +12,17 @@ export default function Me() {
     confirmPassword: "",
   });
   const [initialForm, setInitialForm] = useState(form);
-  const [profilePic, setProfilePic] = useState("https://via.placeholder.com/120");
+  const [profilePic, setProfilePic] = useState("https://placehold.co/600x400");
   const [previewPic, setPreviewPic] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
 
-  // Define user state
   const [user, setUser] = useState(null);
 
-  // Handle changes to input fields
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Handle profile picture upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -35,56 +32,47 @@ export default function Me() {
     }
   };
 
-  // Save profile picture to server
   const handleSavePic = async () => {
     if (!selectedFile) return;
     try {
-      const formData = new FormData();
-      formData.append("profilePicture", selectedFile);
-      const token = localStorage.getItem("token");
-
-      const response = await fetch("http://localhost:3000/api/me/profile-picture", {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload profile picture");
+        const formData = new FormData();
+        formData.append("profilePicture", selectedFile);
+      
+        const token = localStorage.getItem("token");
+      
+        const response = await fetch("http://localhost:3000/api/me/profile-picture", {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+      
+        if (!response.ok) {
+          throw new Error("Failed to upload profile picture");
+        }
+        const data = await response.json();
+        setProfilePic(`${data.profilePictureUrl}?t=${Date.now()}`); // Append a timestamp to prevent caching
+      
+        //      setPreviewPic(null);    ISKE SATH IT DIDNT SHOW IMAGE UNTIL RELOAD...
+        setSelectedFile(null);
+        setEditingPic(false);
+      } catch (error) {
+        console.error("Error uploading profile picture:", error);
       }
-
-      const data = await response.json();
-
-      // Assuming the server response contains the URL of the uploaded image
-      const newProfilePic = data.profilePictureUrl; // Update this according to your server's response structure
-
-      // Update the profilePic state
-      setProfilePic(newProfilePic);
-
-      // Reset preview and selected file
-      setPreviewPic(null);
-      setSelectedFile(null);
-      setEditingPic(false);
-    } catch (error) {
-      console.error("Failed to upload profile picture:", error);
-    }
+      
   };
 
-  // Begin editing user details (name, email, etc.)
   const handleEditDetails = () => {
     setInitialForm(form);
     setEditingDetails(true);
     setForm({ ...form, password: "", confirmPassword: "" });
   };
 
-  // Toggle editing state for profile picture
   const toggleEditing = () => {
     setEditingPic(!editingPic);
   };
 
-  // Validate the form fields before saving
   const validateForm = () => {
     if (editingDetails) {
       if (!form.name || !form.houseNo || !form.email) {
@@ -101,7 +89,6 @@ export default function Me() {
     return true;
   };
 
-  // Save user details (name, houseNo, email, password)
   const handleSaveDetails = async () => {
     if (!validateForm()) return;
 
@@ -168,8 +155,6 @@ export default function Me() {
       alert(error.message);
     }
   };
-
-  // Discard changes and revert to initial state
   const handleDiscardChanges = () => {
     setForm({ ...initialForm, confirmPassword: "" });
     setEditingDetails(false);
@@ -178,9 +163,10 @@ export default function Me() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
+    const adminData = localStorage.getItem('admin');
   
-    if (token && storedUser) {
-      const userObj = JSON.parse(storedUser);
+    if (token && (storedUser || adminData)) {
+      const userObj = storedUser ? JSON.parse(storedUser) : JSON.parse(adminData);
       setUser(userObj);
       setForm({
         name: userObj.name || "John Doe",
@@ -197,7 +183,6 @@ export default function Me() {
         confirmPassword: "",
       });
   
-      // Fetch profile picture from the server based on user ID
       const fetchAndSetProfilePic = async (userId) => {
         try {
           const token = localStorage.getItem("token");
@@ -218,7 +203,6 @@ export default function Me() {
         }
       };
   
-      // Fetch the profile picture of the user
       fetchAndSetProfilePic(userObj.id);
     }
   }, []);

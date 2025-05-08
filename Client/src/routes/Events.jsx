@@ -2,11 +2,11 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
 const Events = () => {
-  const isAdmin = true;
+  const isAdmin = localStorage.getItem('admin') && localStorage.getItem('token');
   const [events, setEvents] = useState([]);
-  const [selectedEventId, setSelectedEventId] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [modalMode, setModalMode] = useState('create'); // 'create', 'edit', 'delete'
+  const [modalMode, setModalMode] = useState('create');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -19,9 +19,7 @@ const Events = () => {
       const token = localStorage.getItem('token');
       try {
         const response = await axios.get(`http://localhost:3000/api/events`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           params: { page: 1, limit: 10 },
         });
         setEvents(response.data);
@@ -34,26 +32,24 @@ const Events = () => {
 
   const openModal = (mode, event = null) => {
     setModalMode(mode);
+    setIsModalVisible(true);
+    setSelectedEvent(event);
     if (mode === 'edit' && event) {
-      setSelectedEventId(event._id);
       setFormData({
         title: event.title,
         description: event.description,
         date: event.date,
         venue: event.venue,
       });
-    } else if (mode === 'delete' && event) {
-      setSelectedEventId(event._id);
-    } else {
+    } else if (mode === 'create') {
       setFormData({ title: '', description: '', date: '', venue: '' });
     }
-    setIsModalVisible(true);
   };
 
   const closeModal = () => {
     setIsModalVisible(false);
     setFormData({ title: '', description: '', date: '', venue: '' });
-    setSelectedEventId(null);
+    setSelectedEvent(null);
     setModalMode('create');
   };
 
@@ -64,23 +60,18 @@ const Events = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
-
     try {
       if (modalMode === 'create') {
         await axios.post(`http://localhost:3000/api/events/create`, formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
       } else if (modalMode === 'edit') {
-        await axios.put(
-          `http://localhost:3000/api/events/${selectedEventId}`,
-          formData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        await axios.put(`http://localhost:3000/api/events/${selectedEvent._id}`, formData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
       }
       closeModal();
-      window.location.reload(); // quick refresh to update UI
+      window.location.reload();
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -89,7 +80,7 @@ const Events = () => {
   const handleDelete = async () => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:3000/api/events/${selectedEventId}`, {
+      await axios.delete(`http://localhost:3000/api/events/${selectedEvent._id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       closeModal();
@@ -101,19 +92,18 @@ const Events = () => {
 
   return (
     <div className="w-full md:w-4/5 p-6 md:p-8 relative animate-gradientFade">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
             Society Events
           </h2>
-          <p className="text-sm bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent mt-2 animate-slideIn">
-            View and manage upcoming community events with excitement.
+          <p className="text-md bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent mt-2 animate-slideIn">
+            View and manage upcoming community <br />events with excitement.
           </p>
         </div>
         <button
           onClick={() => openModal('create')}
-          disabled={!isAdmin}
-          className={`mt-4 md:mt-0 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-5 py-2 rounded-lg text-sm font-medium flex items-center justify-center space-x-2 transition-colors duration-200 ${
+          className={`${isAdmin || "hidden"} mt-4 md:mt-0 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-5 py-2 rounded-lg text-sm font-medium flex items-center justify-center space-x-2 transition-colors duration-200 ${
             isAdmin ? '' : 'opacity-50 cursor-not-allowed'
           }`}
         >
@@ -127,22 +117,29 @@ const Events = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {events.map((event, index) => (
           <div
-            key={event.id}
-            className="bg-gradient-to-r from-cyan-500 to-purple-500 text-white p-6 rounded-xl transition-colors duration-300 cursor-pointer relative overflow-hidden"
+            key={event._id}
+            onClick={() => openModal('view', event)}
+            className="bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-4 py-6 rounded-xl transition-colors duration-300 cursor-pointer relative overflow-hidden"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
-            <h3 className="text-lg font-semibold mt-4 bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
-              {event.title}
-            </h3>
-            <p className="text-sm mt-2">Venue: {event.venue}</p>
-            <p className="text-sm mt-1">Date: {event.date}</p>
+            <div className='w-fit'>
+              <h3 className="text-2xl font-semibold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+                {event.title}
+              </h3>
+              <hr className='border-gray-200 mt-1'/>
+            </div>
+            <p className="text-lg mt-2">Venue: {event.venue}</p>
+            <p className="text-lg mt-1">Date: {event.date}</p>
             {event.description && (
-              <p className="text-sm mt-2">
+              <p className="text-lg mt-1">
                 {event.description.slice(0, 70)}{event.description.length > 70 ? '...' : ''}
               </p>
             )}
             {isAdmin && (
-              <div className='mt-2 flex items-center justify-start gap-4'>
+              <div
+                className='mt-2 flex items-center justify-start gap-4'
+                onClick={(e) => e.stopPropagation()}
+              >
                 <div
                   onClick={() => openModal('edit', event)}
                   className='py-1 px-3 border-2 border-purple-700 shadow-lg rounded-xl cursor-pointer'
@@ -161,15 +158,13 @@ const Events = () => {
         ))}
       </div>
 
-      {isModalVisible && (
+      {isModalVisible && selectedEvent && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="border-2 border-transparent bg-gradient-to-r from-cyan-500 to-purple-500 p-1 rounded-lg animate-slideIn">
             <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
               {modalMode === 'delete' ? (
                 <>
-                  <h3 className="text-xl font-semibold text-gray-800 text-center">
-                    Confirm Delete
-                  </h3>
+                  <h3 className="text-xl font-semibold text-gray-800 text-center">Confirm Delete</h3>
                   <p className="text-sm text-center text-gray-600 mt-4">
                     Are you sure you want to delete this event?
                   </p>
@@ -187,6 +182,19 @@ const Events = () => {
                       Cancel
                     </button>
                   </div>
+                </>
+              ) : modalMode === 'view' ? (
+                <>
+                  <h3 className="text-2xl font-bold text-center text-gray-800">{selectedEvent.title}</h3>
+                  <p className="mt-2 text-center text-gray-600">{selectedEvent.date} | {selectedEvent.venue}</p>
+                  <hr className="my-4" />
+                  <p className="text-gray-700 whitespace-pre-line">{selectedEvent.description}</p>
+                  <button
+                    onClick={closeModal}
+                    className="mt-6 w-full bg-gradient-to-r from-red-600 to-rose-600 text-white px-4 py-2 rounded-lg text-sm"
+                  >
+                    Close
+                  </button>
                 </>
               ) : (
                 <>
@@ -234,7 +242,6 @@ const Events = () => {
                         name="venue"
                         value={formData.venue}
                         onChange={handleFormChange}
-                        required
                         className="mt-1 block w-full p-2 border border-gray-300 rounded-lg text-sm"
                       />
                     </div>

@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
 const Services = () => {
-  const isAdmin = true;
+  const isAdmin = localStorage.getItem('admin') && localStorage.getItem('token');
   const [services, setServices] = useState([]);
   const [selectedServiceId, setSelectedServiceId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -96,19 +96,19 @@ const Services = () => {
 
   return (
     <div className="w-full md:w-4/5 p-6 md:p-8 relative animate-gradientFade">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
             Service Dashboard
           </h2>
-          <p className="text-sm bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent mt-2 animate-slideIn">
+          <p className="text-lg bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent mt-2 animate-slideIn">
             We're here top help! Request a Service.
           </p>
         </div>
         <button
           onClick={() => openModal('create')}
           disabled={!isAdmin}
-          className={`mt-4 md:mt-0 bg-gradient-to-r from-red-600 to-pink-500 text-white px-5 py-2 rounded-lg text-sm font-medium flex items-center justify-center space-x-2 transition-colors duration-200 ${
+          className={`${isAdmin && "hidden"} mt-4 md:mt-0 bg-gradient-to-r from-red-600 to-pink-500 text-white px-5 py-2 rounded-lg text-sm font-medium flex items-center justify-center space-x-2 transition-colors duration-200 ${
             isAdmin ? '' : 'opacity-50 cursor-not-allowed'
           }`}
         >
@@ -126,17 +126,20 @@ const Services = () => {
             className="bg-gradient-to-r from-red-400 to-pink-500 text-white p-6 rounded-xl transition-colors duration-300 relative"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
-            <h3 className="text-md">
-              {service.houseNo}, {new Date(service.date).toLocaleDateString('en-GB', {
+            <div className='w-fit'>
+            <h3 className="text-xl">
+              {service.houseNo}, {new Date(service.request).toLocaleDateString('en-GB', {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
               })}
             </h3>
+            <hr className='border-gray-200 my-2'/>
+            </div>
 
-            <p className="text-md mt-1">Category: {service.category}</p>
+            <p className="text-xl mt-1">Category: {service.category}</p>
             {service.detail && (
-              <p className="text-md mt-2">
+              <p className="text-xl mt-2">
                 {service.detail.slice(0, 70)}{service.detail.length > 70 ? '...' : ''}
               </p>
             )}

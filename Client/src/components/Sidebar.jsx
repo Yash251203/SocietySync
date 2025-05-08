@@ -18,10 +18,11 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     const fn = async () => {
       try {
         const token = localStorage.getItem('token');
+        const adminData = localStorage.getItem('admin');
         const storedUser = localStorage.getItem('user');
         
-        if (token && storedUser) {
-          const userObj = JSON.parse(storedUser);
+        if (token && (storedUser || adminData)) {
+          const userObj = storedUser ? JSON.parse(storedUser) : JSON.parse(adminData);
           setUser(userObj);
           if (userObj.id) {
             const response = await fetch(`http://localhost:3000/api/me/profile-picture/${userObj.id}`);
@@ -47,6 +48,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('admin');
     navigate("/login");
   };
 
@@ -79,7 +81,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         navigate("/me");
       }}>
       { user && (
-        <div className="mb-6 flex items-center">
+        <div className="mb-6 flex items-center bg-gray-300 hover:bg-gray-500 rounded-lg">
         <div>
           {profilePicture ? (
             <img

@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
 const Complaints = () => {
-  const isAdmin = true;
+  const isAdmin = localStorage.getItem('admin') && localStorage.getItem('token');
   const [complaints, setComplaints] = useState([]);
   const [selectedComplaintId, setSelectedComplaintId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -107,7 +107,7 @@ const Complaints = () => {
         <button
           onClick={() => openModal('create')}
           disabled={!isAdmin}
-          className={`mt-4 md:mt-0 bg-gradient-to-r from-red-600 to-pink-500 text-white px-5 py-2 rounded-lg text-sm font-medium flex items-center justify-center space-x-2 transition-colors duration-200 ${
+          className={` ${isAdmin && "hidden"} mt-4 md:mt-0 bg-gradient-to-r from-red-600 to-pink-500 text-white px-5 py-2 rounded-lg text-sm font-medium flex items-center justify-center space-x-2 transition-colors duration-200 ${
             isAdmin ? '' : 'opacity-50 cursor-not-allowed'
           }`}
         >

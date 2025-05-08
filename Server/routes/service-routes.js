@@ -1,6 +1,7 @@
 const express = require("express");
 const authMiddleware = require("../middlewares/auth");
 const serviceModel = require("../models/serviceModel");
+const userModel = require("../models/userModel");
 const router = express.Router();
 
 router.post("/create", authMiddleware, async (req, res) => {
@@ -11,6 +12,14 @@ router.post("/create", authMiddleware, async (req, res) => {
     try {
         const existing = await serviceModel.findOne({ category, detail });
         if (existing) return res.json({ message: "Service Request already exists"});
+        const today = new Date();
+        const parts = today.toLocaleDateString('en-GB', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        }).split(" ");
+        const formattedDate = `${parts[0]}, ${parts.slice(1).join(' ')}`;
 
         const service = new serviceModel({
             residentId: req.user._id,
@@ -18,6 +27,7 @@ router.post("/create", authMiddleware, async (req, res) => {
             category,
             detail,
             status: "open",
+            request: formattedDate,
         });
         await service.save();
     
@@ -35,11 +45,20 @@ router.get("/", authMiddleware, async (req, res) => {
         const pageNumber = parseInt(page, 10);
         const limitNumber = parseInt(limit, 10);
 
-        const service = await serviceModel.find({ residentId: req.user._id})
-            .sort({ date: 1 })  // Optional: Sort service by date (ascending)
-            .skip((pageNumber - 1) * limitNumber)  // Skip service based on current page
-            .limit(limitNumber);  // Limit the number of service returned
-
+        let service;
+        const admin = await userModel.findById(req.user._id );
+        if (admin.role !== "admin") {
+            service = await serviceModel.find({ residentId: req.user._id})
+                .sort({ date: 1 })  // Optional: Sort service by date (ascending)
+                .skip((pageNumber - 1) * limitNumber)  // Skip service based on current page
+                .limit(limitNumber);  // Limit the number of service returned
+        }
+        else {
+            service = await serviceModel.find()
+                .sort({ date: 1 })  // Optional: Sort service by date (ascending)
+                .skip((pageNumber - 1) * limitNumber)  // Skip service based on current page
+                .limit(limitNumber);  // Limit the number of service returned
+        }
         res.json(service);
     } catch (error) {
         console.error(error);

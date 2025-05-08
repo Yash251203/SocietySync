@@ -10,6 +10,7 @@ import Services from './routes/Services';
 import RentMaintenance from './routes/RentMaintenance';
 import DashboardContent from './components/DashboardContent';
 import Me from './routes/Me';
+import AdminLogin from './routes/AdminLogin';
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -18,10 +19,11 @@ const App = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
+    const storedAdmin = localStorage.getItem('admin');
     if (token && storedUser) {
       setUser(JSON.parse(storedUser));
-    } else {
-      setUser(null);
+    } else if (token && storedAdmin) {
+      setUser(JSON.parse(storedAdmin));
     }
     setLoading(false);
   }, []);
@@ -30,8 +32,10 @@ const App = () => {
 
   return (
     <Routes>
+      {/* Login Route */}
       <Route path="/login" element={<Login setUser={setUser} />} />
 
+      {/* Layout Route with user authentication check */}
       <Route element={<Layout user={user} />}>
         <Route path="/dashboard" element={<DashboardContent />} />
         <Route path="/events" element={<Events />} />
@@ -41,9 +45,12 @@ const App = () => {
         <Route path="/services" element={<Services />} />
         <Route path="/rent-maintenance" element={<RentMaintenance />} />
         <Route path="/me" element={<Me />} />
-
       </Route>
 
+      {/* Admin Login Route */}
+      <Route path="/login/admin" element={<AdminLogin />} />
+
+      {/* Catch-all Route */}
       <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
     </Routes>
   );

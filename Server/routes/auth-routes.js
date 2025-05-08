@@ -43,7 +43,7 @@ router.post("/login", async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
         res.json({ token, user: { id: user._id, name: user.name, houseNo: user.houseNo, email: user.email } });    
     } catch (error) {
@@ -56,19 +56,37 @@ router.get("/me", authMiddleware, (req, res) => {
     res.json(req.user);
 })
 
-// router.get("/profile-picture", authMiddleware, async (req, res) => {
-//     try {
-//       const user = await userModel.findById(req.user._id);
-//       if (!user || !user.profilePicture || !user.profilePicture.data) {
-//         return res.status(404).json({ message: "Profile picture not found" });
-//       }
-  
-//       res.set("Content-Type", user.profilePicture.contentType);
-//       res.send(user.profilePicture.data);
-//     } catch (error) {
-//       res.status(500).json({ message: "Failed to retrieve profile picture" });
-//     }
-//   });
+router.post("/login/admin", async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const admin = await userModel.findOne({ email });
+        if (!admin || admin.role !== "admin") {
+            return res.status(400).json({ message: 'Admin not found' });
+        }
+
+        const isMatch = await bcrypt.compare(password, admin.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        const token = jwt.sign({ id: admin._id, role: admin.role }, process.env.JWT_SECRET, { expiresIn: '30d' });
+
+        res.json({
+            token,
+            user: {
+                id: admin._id,
+                name: admin.name,
+                email: admin.email,
+                role: admin.role,
+                houseNo: admin.houseNo,
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Oops! Something went wrong. We're working on it." });
+    }
+});
+
   
 
 module.exports = router;

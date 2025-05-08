@@ -4,14 +4,28 @@ import { Link, useNavigate } from 'react-router-dom';
 const DashboardContent = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const navigate = useNavigate();
+  const [role, setRole] = useState("user");
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
+    const adminData = localStorage.getItem('admin');
     const token = localStorage.getItem('token');
-    if (userData && token) {
-      setDashboardData(JSON.parse(userData));
+  
+    if ((!userData && !adminData) || !token) {
+      navigate('/login');
+    } else {
+      try {
+        const data = userData || adminData;
+        setDashboardData(JSON.parse(data));
+      } catch (e) {
+        console.error("Error parsing dashboard data:", e);
+        navigate('/login');
+      }
     }
-  }, []); 
+    if (adminData) setRole("admin");
+  }, []);
+  console.log(role);
+  
 
   const today = new Date();
   const parts = today.toLocaleDateString('en-GB', {
@@ -137,6 +151,7 @@ const DashboardContent = () => {
         <h2 className="text-3xl md:text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent animate-pulseText">
           {`${dashboardData.name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}, ${dashboardData.houseNo}`}
         </h2>
+        { role === "admin" && <span className='text-red-800 text-2xl font-semibold'>[ Admin ]</span>}
         <p className="text-lg bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent animate-slideIn">
           Today is {`${formattedDate}`}
         </p>

@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [form, setForm] = useState({ name: '', houseNo: '', email: '', password: '' });
   const [isLogin, setIsLogin] = useState(true);
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -21,53 +20,23 @@ const Login = () => {
         withCredentials: true,
       });
 
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-      setUser(res.data.user);
-      navigate("/dashboard");
+console.log("LOGIN SUCCESS:", res.data);
+
+      const user = res.data.user;
+      const token = res.data.token;
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Delay navigation slightly to ensure storage is complete
+      // setTimeout(() => {
+      //   navigate("/dashboard");
+      // }, 3000);
+      window.location.href = "/dashboard";
     } catch (err) {
       alert(err.response?.data?.message || 'Something went wrong');
     }
   };
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setUser(false);
-        return;
-      }
-
-      try {
-        const res = await axios.get('http://localhost:3000/api/auth/me', {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        });
-
-        if (res.data) {
-          setUser(res.data);
-          navigate('/dashboard');
-        } else {
-          setUser(false);
-          localStorage.removeItem('token');
-        }
-      } catch (err) {
-        setUser(false);
-        localStorage.removeItem('token');
-      }
-    };
-
-    // Only check authentication when the component mounts
-    checkAuth();
-  }, [navigate]);
-
-  if (user === null) {
-    return (
-      <div className="flex items-center justify-center min-h-screen w-screen bg-gray-900">
-        <div className="loader"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex items-center justify-center min-h-screen w-screen bg-gray-900">
@@ -76,7 +45,7 @@ const Login = () => {
           <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent mb-6 text-center animate-pulseText">
             {isLogin ? 'Login to SocietySync' : 'Register for SocietySync'}
           </h2>
-          <form onSubmit={handleSubmit} className="h-96 w-96 space-y-4">
+          <form onSubmit={handleSubmit} className="min-h-[30vh] w-96 space-y-4">
             {!isLogin && (
               <>
                 <div>
@@ -146,6 +115,10 @@ const Login = () => {
               {isLogin ? 'Need to register?' : 'Already have an account?'}
             </p>
           </form>
+          <div className='flex gap-4 justify-center items-center mt-4'>
+            <h1 onClick={() => navigate("/login/admin")} className='text-blue-600 cursor-pointer hover:text-blue-700 underline'>Are you an Admin?</h1>
+            <h1 className='text-blue-600 hover:text-blue-700 underline'>Are you a Worker?</h1>
+          </div>
         </div>
       </div>
     </div>

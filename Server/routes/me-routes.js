@@ -28,7 +28,6 @@ router.get("/", authMiddleware, async (req, res) => {
 router.put("/profile-picture", authMiddleware, upload.single("profilePicture"), async (req, res) => {
     try { 
         const user = await userModel.findById(req.user._id);
-        console.log(user)
         if (!user) return res.status(404).json({ message: "User not found" });
 
         if (!req.file) return res.status(400).json({ message: "No file uploaded" });
@@ -38,7 +37,11 @@ router.put("/profile-picture", authMiddleware, upload.single("profilePicture"), 
             contentType: req.file.mimetype,
         };
 
-        res.json({ message: "Profile picture updated successfully" });
+        await user.save();
+
+        res.json({ message: "Profile picture updated successfully",
+            profilePictureUrl: `/api/me/profile-picture/${user._id}`,
+         });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Failed to update profile picture" });

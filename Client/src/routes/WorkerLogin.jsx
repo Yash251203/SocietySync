@@ -16,15 +16,16 @@ const Login = () => {
     e.preventDefault();
     setErrorMessage(null);
     try {
-      const res = await axios.post('http://localhost:3000/api/auth/login/admin', form, {
+      const res = await axios.post('http://localhost:3000/api/auth/login/worker', form, {
         withCredentials: true,
       });
       localStorage.setItem('token', res.data.token);
-      localStorage.setItem('admin', JSON.stringify(res.data.user));
+      localStorage.setItem('worker', JSON.stringify(res.data.user));
       setUser(res.data.user);
-      window.location.href = "/dashboard";
+      window.location.href = "/dashboard/worker";
       
     } catch (err) {
+      localStorage.removeItem('token');
       setErrorMessage(err.response?.data?.message || 'Something went wrong');
     }
   };
@@ -36,16 +37,15 @@ const Login = () => {
         setUser(false);
         return;
       }
-
       try {
         const res = await axios.get('http://localhost:3000/api/auth/me', {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
 
-        if (res.data?.role === 'admin') {
+        if (res.data) {
           setUser(res.data);
-          navigate('/dashboard');
+          navigate('/dashboard/worker');
         } else {
           setUser(false);
           localStorage.removeItem('token');
@@ -72,7 +72,7 @@ const Login = () => {
       <div className="border-2 border-transparent p-1 rounded-xl animate-slideIn">
         <div className="bg-gray-200 p-8 rounded-lg shadow-xl max-w-md w-full mx-4">
           <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent mb-6 text-center animate-pulseText">
-            Login As An Admin
+            Login As A Worker
           </h2>
           {errorMessage && (
             <div className="bg-red-500 text-white p-2 mb-4 rounded-lg text-center">
@@ -86,6 +86,7 @@ const Login = () => {
               </label>
               <input
                 type="email"
+                required
                 id="email"
                 name="email"
                 onChange={handleChange}
@@ -100,6 +101,7 @@ const Login = () => {
               <input
                 type="password"
                 id="password"
+                required
                 name="password"
                 onChange={handleChange}
                 className="mt-1 block w-full p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-200"
@@ -123,8 +125,8 @@ const Login = () => {
             >
               Are you a User?
             </h1>
-            <h1 onClick={() => navigate("/login/worker")} className="text-blue-600 cursor-pointer hover:text-blue-700 underline">
-              Are you a Worker?
+            <h1 onClick={() => navigate("/login/admin")}  className="text-blue-600 cursor-pointer hover:text-blue-700 underline">
+              Are you an Admin?
             </h1>
           </div>
         </div>

@@ -32,7 +32,7 @@ const serviceSchema = new mongoose.Schema({
   },
   workerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'user', // Assuming worker is also a user
+    ref: 'worker', // Assuming worker is also a user
     default: null,
   },
 });

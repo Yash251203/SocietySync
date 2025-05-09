@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const [user, setUser] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
+  const [isWorker, setisWorker] = useState(false);
   const navigate = useNavigate();
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
@@ -20,12 +21,19 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         const token = localStorage.getItem('token');
         const adminData = localStorage.getItem('admin');
         const storedUser = localStorage.getItem('user');
+        const workerData = localStorage.getItem('worker');
+        if (workerData) setisWorker(true);
         
-        if (token && (storedUser || adminData)) {
-          const userObj = storedUser ? JSON.parse(storedUser) : JSON.parse(adminData);
+        if (token && (storedUser || adminData || workerData)) {
+          const userObj = storedUser ? JSON.parse(storedUser) : adminData ? JSON.parse(adminData): JSON.parse(workerData);
           setUser(userObj);
           if (userObj.id) {
-            const response = await fetch(`http://localhost:3000/api/me/profile-picture/${userObj.id}`);
+            const response = await fetch(`http://localhost:3000/api/me/profile-picture/${userObj.id}`, {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${token}`,
+              }
+            });            
             if (response.ok) {
               const blob = await response.blob();
               setProfilePicture(URL.createObjectURL(blob));
@@ -49,6 +57,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('admin');
+    localStorage.removeItem('worker');
     navigate("/login");
   };
 
@@ -106,7 +115,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       </div>
       <nav>
         <ul className="flex flex-col space-y-1">
-          {navItems.map((item) => (
+          {!isWorker && navItems.map((item) => (
             <li key={item.label}>
               <Link
                 to={item.path}

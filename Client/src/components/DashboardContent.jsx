@@ -24,7 +24,6 @@ const DashboardContent = () => {
     }
     if (adminData) setRole("admin");
   }, []);
-  console.log(role);
   
 
   const today = new Date();

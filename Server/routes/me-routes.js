@@ -4,21 +4,19 @@ const router = express.Router();
 const authMiddleware = require("../middlewares/auth");
 const upload = require("../configs/multer");
 const bcrypt = require("bcrypt");
+const workerModel = require("../models/workerModel");
 
 router.get("/", authMiddleware, async (req, res) => {
     try {
-        const user = await userModel.findById(req.user._id);
+        let user = req.user;
+        if (user.role && (user.role === "admin" || user.role === "user")) {
+            user = await userModel.findById(user._id).select('name email houseNo profilePicture');
+        } else {
+            user = await workerModel.findById(user._id).select('name email joinedAt profilePicture');
+        }
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        res.json({
-            user: {
-                name: user.name,
-                email: user.email,
-                houseNo: user.houseNo,
-                profilePicture: user.profilePicture
-            }
-        });
     } catch (err) {
         res.status(500).json({ message: "Error fetching user data" });
     }
@@ -27,7 +25,12 @@ router.get("/", authMiddleware, async (req, res) => {
 
 router.put("/profile-picture", authMiddleware, upload.single("profilePicture"), async (req, res) => {
     try { 
-        const user = await userModel.findById(req.user._id);
+        let user = req.user;
+        if (user.role && user.role === "admin" || user.role === "user") {
+            user = await userModel.findById(user._id);
+        } else {
+            user = await workerModel.findById(user._id);
+        }
         if (!user) return res.status(404).json({ message: "User not found" });
 
         if (!req.file) return res.status(400).json({ message: "No file uploaded" });
@@ -50,7 +53,9 @@ router.put("/profile-picture", authMiddleware, upload.single("profilePicture"), 
 
 router.get("/profile-picture/:userId", async (req, res) => {
     try {
-      const user = await userModel.findById(req.params.userId);
+        let userId = req.params.userId;
+        let user = await userModel.findById(userId);
+        if (!user) user = await workerModel.findById(userId);
       if (!user || !user.profilePicture) {
         return res.status(404).json({ message: "Profile picture not found" });
       }

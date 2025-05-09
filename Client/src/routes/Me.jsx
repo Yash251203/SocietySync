@@ -164,9 +164,10 @@ export default function Me() {
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
     const adminData = localStorage.getItem('admin');
+    const workerData = localStorage.getItem('worker');
   
-    if (token && (storedUser || adminData)) {
-      const userObj = storedUser ? JSON.parse(storedUser) : JSON.parse(adminData);
+    if (token && (storedUser || adminData || workerData)) {
+      const userObj = storedUser ? JSON.parse(storedUser) : adminData ? JSON.parse(adminData) : JSON.parse(workerData);
       setUser(userObj);
       setForm({
         name: userObj.name || "John Doe",

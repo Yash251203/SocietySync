@@ -4,6 +4,7 @@ const router = express.Router();
 const authMiddleware = require("../middlewares/auth");
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt");
+const workerModel = require("../models/workerModel");
 
 router.post("/register", async (req, res) => {
     const { name, email, password, houseNo } = req.body;
@@ -87,6 +88,63 @@ router.post("/login/admin", async (req, res) => {
     }
 });
 
-  
+router.post("/login/worker", async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const worker = await workerModel.findOne({ email });
+        if (!worker) {
+            return res.status(400).json({ message: 'worker not found' });
+        }
+
+        const isMatch = await bcrypt.compare(password, worker.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        const token = jwt.sign({ id: worker._id, email: worker.email }, process.env.JWT_SECRET, { expiresIn: '30d' });
+
+        res.json({
+            token,
+            user: {
+                id: worker._id,
+                name: worker.name,
+                email: worker.email,
+                joinedAt: worker.joinedAt,
+                
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Oops! Something went wrong. We're working on it." });
+    }
+});
+
+router.post("/register/worker", async (req, res) => {
+    const { name, email, password } = req.body;
+    if (!name || !email || !password ) return res.status(400).json({ message: 'Please fill all the credentials' });
+    try {
+        const existing = await workerModel.findOne({ email });
+        if (existing) return res.status(400).json({ message: 'User already Exists' });
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new workerModel({
+            name,
+            email,
+            password: hashedPassword,
+            profilePicture: req.file ? {
+                data: req.file.buffer,
+                contentType: req.file.mimetype
+            } : undefined
+        });
+        await newUser.save();
+
+        const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+
+        res.json({ token, user: { id: newUser._id, name: newUser.name, email: newUser.email, profilePicture: !!newUser.profilePicture?.data, } });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: "Oops! Something broke. We're working on it."});
+    }
+});
 
 module.exports = router;

@@ -20,8 +20,6 @@ const Login = () => {
         withCredentials: true,
       });
 
-console.log("LOGIN SUCCESS:", res.data);
-
       const user = res.data.user;
       const token = res.data.token;
 
@@ -117,7 +115,7 @@ console.log("LOGIN SUCCESS:", res.data);
           </form>
           <div className='flex gap-4 justify-center items-center mt-4'>
             <h1 onClick={() => navigate("/login/admin")} className='text-blue-600 cursor-pointer hover:text-blue-700 underline'>Are you an Admin?</h1>
-            <h1 className='text-blue-600 hover:text-blue-700 underline'>Are you a Worker?</h1>
+            <h1 onClick={() => navigate("/login/worker")} className='text-blue-600 hover:text-blue-700 underline'>Are you a Worker?</h1>
           </div>
         </div>
       </div>

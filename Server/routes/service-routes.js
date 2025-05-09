@@ -2,6 +2,7 @@ const express = require("express");
 const authMiddleware = require("../middlewares/auth");
 const serviceModel = require("../models/serviceModel");
 const userModel = require("../models/userModel");
+const workerModel = require("../models/workerModel");
 const router = express.Router();
 
 router.post("/create", authMiddleware, async (req, res) => {
@@ -20,6 +21,9 @@ router.post("/create", authMiddleware, async (req, res) => {
             year: 'numeric'
         }).split(" ");
         const formattedDate = `${parts[0]}, ${parts.slice(1).join(' ')}`;
+        let worker;
+        if (category === "Carpentering" || category === "Electrical") worker = await workerModel.findOne({name: "Sakharam"});
+        else worker = await workerModel.findOne({name: "ManiRam Sharma"});
 
         const service = new serviceModel({
             residentId: req.user._id,
@@ -28,6 +32,7 @@ router.post("/create", authMiddleware, async (req, res) => {
             detail,
             status: "open",
             request: formattedDate,
+            workerId: worker._id,
         });
         await service.save();
     
@@ -47,14 +52,20 @@ router.get("/", authMiddleware, async (req, res) => {
 
         let service;
         const admin = await userModel.findById(req.user._id );
-        if (admin.role !== "admin") {
+        if (admin && admin.role !== "admin") {
             service = await serviceModel.find({ residentId: req.user._id})
                 .sort({ date: 1 })  // Optional: Sort service by date (ascending)
                 .skip((pageNumber - 1) * limitNumber)  // Skip service based on current page
                 .limit(limitNumber);  // Limit the number of service returned
         }
-        else {
+        else if (admin && admin.role === "user"){
             service = await serviceModel.find()
+                .sort({ date: 1 })  // Optional: Sort service by date (ascending)
+                .skip((pageNumber - 1) * limitNumber)  // Skip service based on current page
+                .limit(limitNumber);  // Limit the number of service returned
+        } else {
+            let worker = await workerModel.findOne(req.user._id);
+            service = await serviceModel.find({workerId: worker._id})
                 .sort({ date: 1 })  // Optional: Sort service by date (ascending)
                 .skip((pageNumber - 1) * limitNumber)  // Skip service based on current page
                 .limit(limitNumber);  // Limit the number of service returned
@@ -85,6 +96,25 @@ router.put("/:id", authMiddleware, async (req, res) => {
         res.status(500).json({ error: "Failed to update request" });
     }
 });
+
+router.patch("/:id", authMiddleware, async (req, res) => {
+    const { id } = req.params;
+    try {
+      const updatedRequest = await serviceModel.findByIdAndUpdate(
+        id,
+        { status: "closed" },
+        { new: true }
+      );
+  
+      if (!updatedRequest) return res.status(404).json({ message: "Request not found" });
+  
+      res.json(updatedRequest);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to update status" });
+    }
+  });
+  
 
 router.delete("/:id", authMiddleware, async (req, res) => {
     try {

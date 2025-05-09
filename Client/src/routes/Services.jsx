@@ -61,7 +61,6 @@ const Services = () => {
 
     try {
       if (modalMode === 'create') {
-        console.log(formData)
         await axios.post(`http://localhost:3000/api/services/create`, formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -107,10 +106,7 @@ const Services = () => {
         </div>
         <button
           onClick={() => openModal('create')}
-          disabled={!isAdmin}
-          className={`${isAdmin && "hidden"} mt-4 md:mt-0 bg-gradient-to-r from-red-600 to-pink-500 text-white px-5 py-2 rounded-lg text-sm font-medium flex items-center justify-center space-x-2 transition-colors duration-200 ${
-            isAdmin ? '' : 'opacity-50 cursor-not-allowed'
-          }`}
+          className={`${isAdmin && "hidden"} mt-4 md:mt-0 bg-gradient-to-r from-red-600 to-pink-500 text-white px-5 py-2 rounded-lg text-sm font-medium flex items-center justify-center space-x-2 transition-colors duration-200`}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
@@ -143,7 +139,6 @@ const Services = () => {
                 {service.detail.slice(0, 70)}{service.detail.length > 70 ? '...' : ''}
               </p>
             )}
-            {isAdmin && (
               <div className="mt-3 flex gap-4">
                 <div
                   onClick={() => openModal('edit', service)}
@@ -158,7 +153,6 @@ const Services = () => {
                   ❌ Delete
                 </div>
               </div>
-            )}
           </div>
         ))}
       </div>

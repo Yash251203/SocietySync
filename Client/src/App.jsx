@@ -11,6 +11,8 @@ import RentMaintenance from './routes/RentMaintenance';
 import DashboardContent from './components/DashboardContent';
 import Me from './routes/Me';
 import AdminLogin from './routes/AdminLogin';
+import WorkerLogin from './routes/WorkerLogin';
+import WorkerDashBoard from './components/WorkerDashBoard';
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -20,10 +22,13 @@ const App = () => {
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
     const storedAdmin = localStorage.getItem('admin');
+    const storedWorker = localStorage.getItem('worker');
     if (token && storedUser) {
       setUser(JSON.parse(storedUser));
     } else if (token && storedAdmin) {
       setUser(JSON.parse(storedAdmin));
+    } else if (token && storedWorker) {
+      setUser(JSON.parse(storedWorker));
     }
     setLoading(false);
   }, []);
@@ -37,6 +42,7 @@ const App = () => {
 
       {/* Layout Route with user authentication check */}
       <Route element={<Layout user={user} />}>
+        <Route path="/dashboard/worker" element={<WorkerDashBoard />} />
         <Route path="/dashboard" element={<DashboardContent />} />
         <Route path="/events" element={<Events />} />
         <Route path="/complaints" element={<Complaints />} />
@@ -49,6 +55,7 @@ const App = () => {
 
       {/* Admin Login Route */}
       <Route path="/login/admin" element={<AdminLogin />} />
+      <Route path="/login/worker" element={<WorkerLogin />} />
 
       {/* Catch-all Route */}
       <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} />} />

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Siren } from 'lucide-react';
 
 const DashboardContent = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -35,6 +36,19 @@ const DashboardContent = () => {
   }).split(" ");
   const formattedDate = `${parts[0]}, ${parts.slice(1).join(' ')}`;  
 
+  const emergency = {
+    title: 'Emergency',
+    description: 'Press for urgent help',
+    bg: 'bg-gradient-to-br from-red-500 to-rose-600',
+    href: '/emergency',
+    image: 'https://cdn.pixabay.com/photo/2020/03/31/14/04/covid-19-4987797_1280.jpg',
+    icon: (
+      <svg className="w-8 h-8 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
+    )
+  };
+
   const cards = [
     {
       title: 'Events',
@@ -69,18 +83,6 @@ const DashboardContent = () => {
       icon: (
         <svg className="w-8 h-8 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-      )
-    },
-    {
-      title: 'Emergency',
-      description: 'Press for urgent help',
-      bg: 'bg-gradient-to-br from-red-500 to-rose-600',
-      href: '/emergency',
-      image: 'https://cdn.pixabay.com/photo/2020/03/31/14/04/covid-19-4987797_1280.jpg',
-      icon: (
-        <svg className="w-8 h-8 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
         </svg>
       )
     },
@@ -147,9 +149,23 @@ const DashboardContent = () => {
     </style>
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
       <div>
-        <h2 className="text-3xl md:text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent animate-pulseText">
-          {`${dashboardData.name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}, ${dashboardData.houseNo}`}
-        </h2>
+        <div className='flex items-center gap-4'>
+          <h2 className="text-3xl md:text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent animate-pulseText">
+          {`Hi ${
+            (() => {
+              const firstName = dashboardData.name.trim().split(' ')[0];
+              const formatted = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+              return formatted.length > 12 ? formatted.slice(0, 9) + '...' : formatted;
+            })()
+          }, ${dashboardData.houseNo}`}
+          </h2>
+          <div 
+            to={emergency.href}
+            onClick={() => navigate("/emergency")}
+            className='bg-red-500 hover:bg-red-700 rounded-[50%] p-3 text-white'>
+              <Siren />
+          </div>
+        </div>
         { role === "admin" && <span className='text-red-800 text-2xl font-semibold'>[ Admin ]</span>}
         <p className="text-lg bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent animate-slideIn">
           Today is {`${formattedDate}`}
@@ -162,7 +178,7 @@ const DashboardContent = () => {
         <Link
           key={card.title}
           to={card.href}
-          className={`${card.bg}/50 h-64 text-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 hover:ring-2 hover:ring-cyan-300 transition-all duration-300 cursor-pointer bg-cover bg-center relative overflow-hidden animate-slideIn`}
+          className={`${card.bg}/50 h-60 text-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 hover:ring-2 hover:ring-cyan-300 transition-all duration-300 cursor-pointer bg-cover bg-center relative overflow-hidden animate-slideIn`}
           onClick={card.onClick}
           style={{ backgroundImage: `url(${card.image})`, animationDelay: `${index * 0.1}s` }}
         >

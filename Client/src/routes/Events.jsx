@@ -142,13 +142,13 @@ const Events = () => {
               >
                 <div
                   onClick={() => openModal('edit', event)}
-                  className='py-1 px-3 border-2 border-purple-700 shadow-lg rounded-xl cursor-pointer'
+                  className='py-1 px-3 text-black text-lg hover:bg-gray-200 bg-gray-100 shadow-xl rounded-xl cursor-pointer'
                 >
                   ✏️ Edit
                 </div>
                 <div
                   onClick={() => openModal('delete', event)}
-                  className='py-1 px-3 border-2 border-purple-700 shadow-lg rounded-xl cursor-pointer'
+                  className='py-1 px-3 text-black text-lg hover:bg-gray-200 bg-gray-100 shadow-xl rounded-xl cursor-pointer'
                 >
                   ❌ Delete
                 </div>

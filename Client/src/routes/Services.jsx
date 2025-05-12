@@ -119,9 +119,10 @@ const Services = () => {
         {services.map((service, index) => (
           <div
             key={service._id}
-            className="bg-gradient-to-r from-red-400 to-pink-500 text-white p-6 rounded-xl transition-colors duration-300 relative"
+            className="bg-gradient-to-r relative from-red-400 to-pink-500 text-white p-6 rounded-xl transition-colors duration-300 relative"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
+            <h2 className={`absolute right-[5%] top-[7%] md:top-[4%] text-md md:text-sm capitalize ${service.status === "open" ? "text-green-300" : "text-yellow-300"}`}>· {service.status === "open" ? "In Queue" : "Completed"}</h2>
             <div className='w-fit'>
             <h3 className="text-xl">
               {service.houseNo}, {new Date(service.request).toLocaleDateString('en-GB', {
@@ -142,13 +143,13 @@ const Services = () => {
               <div className="mt-3 flex gap-4">
                 <div
                   onClick={() => openModal('edit', service)}
-                  className="py-1 px-3 border-2 border-pink-800 shadow-lg rounded-xl cursor-pointer"
+                  className="py-1 px-3 text-black text-lg hover:bg-gray-200 bg-gray-100 shadow-xl rounded-xl cursor-pointer"
                 >
                   ✏️ Edit
                 </div>
                 <div
                   onClick={() => openModal('delete', service)}
-                  className="py-1 px-3 border-2 border-pink-800 shadow-lg rounded-xl cursor-pointer"
+                  className="py-1 px-3 text-black text-lg hover:bg-gray-200 bg-gray-100 shadow-xl rounded-xl cursor-pointer"
                 >
                   ❌ Delete
                 </div>

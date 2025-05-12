@@ -97,18 +97,18 @@ const Complaints = () => {
     <div className="w-full md:w-4/5 p-6 md:p-8 relative animate-gradientFade">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
-          <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
             Complaint Dashboard
           </h2>
-          <p className="text-sm bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent mt-2 animate-slideIn">
-            Monitor and address community complaints efficiently.
+          <p className="text-lg bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent mt-2 animate-slideIn">
+            Monitor and address community <br />complaints efficiently.
           </p>
         </div>
         <button
           onClick={() => openModal('create')}
-          disabled={!isAdmin}
+          disabled={isAdmin}
           className={` ${isAdmin && "hidden"} mt-4 md:mt-0 bg-gradient-to-r from-red-600 to-pink-500 text-white px-5 py-2 rounded-lg text-sm font-medium flex items-center justify-center space-x-2 transition-colors duration-200 ${
-            isAdmin ? '' : 'opacity-50 cursor-not-allowed'
+            !isAdmin ? '' : 'opacity-50 cursor-not-allowed'
           }`}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,31 +125,34 @@ const Complaints = () => {
             className="bg-gradient-to-r from-red-400 to-pink-500 text-white p-6 rounded-xl transition-colors duration-300 relative"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
-            <h3 className="text-md">
-              {complaint.houseNo}, {new Date(complaint.date).toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-              })}
-            </h3>
+            <div className='h-fit w-fit'>
+              <h3 className="text-[22px]">
+                {complaint.houseNo}, {new Date(complaint.date).toLocaleDateString('en-GB', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+                })}
+              </h3>
+              <hr className='border-gray-200 mt-1'/>
+            </div>
 
-            <p className="text-md mt-1">Category: {complaint.category}</p>
+            <p className="text-lg mt-2">Category: {complaint.category}</p>
             {complaint.detail && (
-              <p className="text-md mt-2">
+              <p className="text-lg mt-1">
                 {complaint.detail.slice(0, 70)}{complaint.detail.length > 70 ? '...' : ''}
               </p>
             )}
-            {isAdmin && (
+            {!isAdmin && (
               <div className="mt-3 flex gap-4">
                 <div
                   onClick={() => openModal('edit', complaint)}
-                  className="py-1 px-3 border-2 border-pink-800 shadow-lg rounded-xl cursor-pointer"
+                  className="py-1 px-3 shadow-xl text-lg rounded-xl cursor-pointer text-black hover:bg-gray-200 bg-gray-100"
                 >
                   ✏️ Edit
                 </div>
                 <div
                   onClick={() => openModal('delete', complaint)}
-                  className="py-1 px-3 border-2 border-pink-800 shadow-lg rounded-xl cursor-pointer"
+                  className="py-1 px-3 text-black text-lg hover:bg-gray-200 bg-gray-100 shadow-xl rounded-xl cursor-pointer"
                 >
                   ❌ Delete
                 </div>

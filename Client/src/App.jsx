@@ -13,6 +13,7 @@ import Me from './routes/Me';
 import AdminLogin from './routes/AdminLogin';
 import WorkerLogin from './routes/WorkerLogin';
 import WorkerDashBoard from './components/WorkerDashBoard';
+import Discover from './routes/discover';
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -52,6 +53,9 @@ const App = () => {
         <Route path="/rent-maintenance" element={<RentMaintenance />} />
         <Route path="/me" element={<Me />} />
       </Route>
+
+      {/*Discover page Route */}
+      <Route path="/discover" element={<Discover />} />
 
       {/* Admin Login Route */}
       <Route path="/login/admin" element={<AdminLogin />} />

@@ -16,7 +16,7 @@ const Login = () => {
     const endpoint = isLogin ? '/login' : '/register';
 
     try {
-      const res = await axios.post(`http://localhost:3000/api/auth${endpoint}`, form, {
+      const res = await axios.post(`https://societysync-production.up.railway.app/api/auth${endpoint}`, form, {
         withCredentials: true,
       });
 

@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Login from './routes/Login_New';
 import Events from './routes/Events';
-import Complaints from './routes/complaints';
+import Complaints from './routes/Complaints';
 import Ordering from './routes/Ordering';
 import Emergency from './routes/Emergency';
 import Services from './routes/Services';

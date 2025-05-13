@@ -16,7 +16,7 @@ const Login = () => {
     e.preventDefault();
     setErrorMessage(null);
     try {
-      const res = await axios.post('http://localhost:3000/api/auth/login/worker', form, {
+      const res = await axios.post('https://societysync-production.up.railway.app/api/auth/login/worker', form, {
         withCredentials: true,
       });
       localStorage.setItem('token', res.data.token);
@@ -38,7 +38,7 @@ const Login = () => {
         return;
       }
       try {
-        const res = await axios.get('http://localhost:3000/api/auth/me', {
+        const res = await axios.get('https://societysync-production.up.railway.app/api/auth/me', {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });

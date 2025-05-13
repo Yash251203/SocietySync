@@ -14,6 +14,8 @@ import AdminLogin from './routes/AdminLogin';
 import WorkerLogin from './routes/WorkerLogin';
 import WorkerDashBoard from './components/WorkerDashBoard';
 import Discover from './routes/discover';
+import SecurityCams from './routes/Security-cams';
+import VisitorAndDelivery from './routes/VisitorAndDelivery';
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -52,6 +54,8 @@ const App = () => {
         <Route path="/services" element={<Services />} />
         <Route path="/rent-maintenance" element={<RentMaintenance />} />
         <Route path="/me" element={<Me />} />
+        <Route path="/security-cams" element={<SecurityCams />} />
+        <Route path="/visitor-delivery" element={<VisitorAndDelivery />} />
       </Route>
 
       {/*Discover page Route */}

@@ -68,7 +68,7 @@ const Login = () => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen w-screen bg-neutral-950">
+    <div className="flex items-center justify-center min-h-screen w-screen bg-neutral-950 overflow-hidden">
       <div className="border-2 border-transparent p-1 rounded-xl animate-slideIn">
         <div className="bg-gray-200 p-8 rounded-lg shadow-xl max-w-md w-full mx-4">
           <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent mb-6 text-center animate-pulseText">
